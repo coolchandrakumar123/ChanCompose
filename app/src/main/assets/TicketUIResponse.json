@@ -1,0 +1,175 @@
+{
+  "data": [
+    {
+      "id": "ticket-list",
+      "type": "list",
+      "info": {
+        "isGrid": false,
+        "module": "ticket"
+      },
+      "zplatform_templates": [
+        {
+          "type": "plain",
+          "zplatform_action": [
+            {
+              "uiAction": "click",
+              "resultRequired": false,
+              "type": "navigate",
+              "performAction": "push",
+              "zplatform_navigation": {
+                "destination": "ticket-detail",
+                "arguments": [
+                  "ticketId",
+                  "layoutId"
+                ]
+              }
+            },
+            {
+              "uiAction": "longClick",
+              "resultRequired": false,
+              "performAction": "more",
+              "type": "navigate",
+              "zplatform_navigation": {
+                "destination": "ticket-more",
+                "arguments": [
+                  "ticketId"
+                ]
+              }
+            },
+            {
+              "uiAction": "leftSwipe",
+              "type": "confirmation",
+              "performAction": "delete",
+              "resultRequired": true
+            }
+          ],
+          "zplatform_pattern": [
+            {
+              "type": "ColumnSet",
+              "columns": [
+                {
+                  "type": "Column",
+                  "width": "stretch",
+                  "items": [
+                    {
+                      "type": "Image",
+                      "key": "channelIcon",
+                      "size": {
+                        "width": 16,
+                        "height": 14
+                      }
+                    }
+                  ]
+                },
+                {
+                  "type": "Column",
+                  "width": "stretch",
+                  "items": [
+                    {
+                      "type": "TextBlock",
+                      "key": "subject",
+                      "style": {
+                        "size": "Large",
+                        "color": "Primary",
+                        "font": "Default",
+                        "colorMode": "Light"
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "ColumnSet",
+              "columns": [
+                {
+                  "type": "Column",
+                  "width": "stretch",
+                  "items": [
+                    {
+                      "type": "TextBlock",
+                      "key": "ticketNumber",
+                      "style": {
+                        "size": "Little",
+                        "color": "Tertiary",
+                        "font": "Default",
+                        "colorMode": "Light"
+                      }
+                    }
+                  ]
+                },
+                {
+                  "type": "Column",
+                  "width": "stretch",
+                  "items": [
+                    {
+                      "type": "TextBlock",
+                      "key": "contact",
+                      "style": {
+                        "size": "Little",
+                        "color": "Tertiary",
+                        "font": "Default",
+                        "colorMode": "Light"
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "ColumnSet",
+              "columns": [
+                {
+                  "type": "Column",
+                  "width": "stretch",
+                  "items": [
+                    {
+                      "type": "Icon",
+                      "key": "dueDateIcon",
+                      "size": {
+                        "width": 16,
+                        "height": 14
+                      }
+                    }
+                  ]
+                },
+                {
+                  "type": "Column",
+                  "width": "stretch",
+                  "items": [
+                    {
+                      "type": "TextBlock",
+                      "key": "dueDate",
+                      "style": {
+                        "size": "Little",
+                        "color": "Tertiary",
+                        "font": "Default",
+                        "colorMode": "Light"
+                      }
+                    }
+                  ]
+                },
+                {
+                  "type": "Column",
+                  "width": "stretch",
+                  "items": [
+                    {
+                      "type": "TextBlock",
+                      "key": "status",
+                      "style": {
+                        "size": "Little",
+                        "color": "Tertiary",
+                        "font": "Default",
+                        "colorMode": "Light"
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
