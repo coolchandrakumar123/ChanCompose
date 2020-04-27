@@ -52,6 +52,135 @@
                   "width": "stretch",
                   "items": [
                     {
+                      "type": "ColumnSet",
+                      "columns": [
+                        {
+                          "type": "Column",
+                          "width": "stretch",
+                          "items": [
+                            {
+                              "type": "Image",
+                              "key": "channelIcon",
+                              "size": {
+                                "width": 16,
+                                "height": 14
+                              }
+                            }
+                          ]
+                        },
+                        {
+                          "type": "Column",
+                          "width": "stretch",
+                          "items": [
+                            {
+                              "type": "TextBlock",
+                              "key": "subject",
+                              "style": {
+                                "size": "Large",
+                                "color": "Primary",
+                                "font": "Default",
+                                "colorMode": "Light"
+                              }
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "ColumnSet",
+                      "columns": [
+                        {
+                          "type": "Column",
+                          "width": "stretch",
+                          "items": [
+                            {
+                              "type": "TextBlock",
+                              "key": "ticketNumber",
+                              "style": {
+                                "size": "Little",
+                                "color": "Tertiary",
+                                "font": "Default",
+                                "colorMode": "Light"
+                              }
+                            }
+                          ]
+                        },
+                        {
+                          "type": "Column",
+                          "width": "stretch",
+                          "items": [
+                            {
+                              "type": "TextBlock",
+                              "key": "contact",
+                              "style": {
+                                "size": "Little",
+                                "color": "Tertiary",
+                                "font": "Default",
+                                "colorMode": "Light"
+                              }
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "ColumnSet",
+                      "columns": [
+                        {
+                          "type": "Column",
+                          "width": "stretch",
+                          "items": [
+                            {
+                              "type": "Icon",
+                              "key": "dueDateIcon",
+                              "size": {
+                                "width": 16,
+                                "height": 14
+                              }
+                            }
+                          ]
+                        },
+                        {
+                          "type": "Column",
+                          "width": "stretch",
+                          "items": [
+                            {
+                              "type": "TextBlock",
+                              "key": "dueDate",
+                              "style": {
+                                "size": "Little",
+                                "color": "Tertiary",
+                                "font": "Default",
+                                "colorMode": "Light"
+                              }
+                            }
+                          ]
+                        },
+                        {
+                          "type": "Column",
+                          "width": "stretch",
+                          "items": [
+                            {
+                              "type": "TextBlock",
+                              "key": "status",
+                              "style": {
+                                "size": "Little",
+                                "color": "Tertiary",
+                                "font": "Default",
+                                "colorMode": "Light"
+                              }
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "Column",
+                  "width": "stretch",
+                  "items": [
+                    {
                       "type": "Image",
                       "key": "channelIcon",
                       "size": {
@@ -60,113 +189,10 @@
                       }
                     }
                   ]
-                },
-                {
-                  "type": "Column",
-                  "width": "stretch",
-                  "items": [
-                    {
-                      "type": "TextBlock",
-                      "key": "subject",
-                      "style": {
-                        "size": "Large",
-                        "color": "Primary",
-                        "font": "Default",
-                        "colorMode": "Light"
-                      }
-                    }
-                  ]
-                }
-              ]
-            },
-            {
-              "type": "ColumnSet",
-              "columns": [
-                {
-                  "type": "Column",
-                  "width": "stretch",
-                  "items": [
-                    {
-                      "type": "TextBlock",
-                      "key": "ticketNumber",
-                      "style": {
-                        "size": "Little",
-                        "color": "Tertiary",
-                        "font": "Default",
-                        "colorMode": "Light"
-                      }
-                    }
-                  ]
-                },
-                {
-                  "type": "Column",
-                  "width": "stretch",
-                  "items": [
-                    {
-                      "type": "TextBlock",
-                      "key": "contact",
-                      "style": {
-                        "size": "Little",
-                        "color": "Tertiary",
-                        "font": "Default",
-                        "colorMode": "Light"
-                      }
-                    }
-                  ]
-                }
-              ]
-            },
-            {
-              "type": "ColumnSet",
-              "columns": [
-                {
-                  "type": "Column",
-                  "width": "stretch",
-                  "items": [
-                    {
-                      "type": "Icon",
-                      "key": "dueDateIcon",
-                      "size": {
-                        "width": 16,
-                        "height": 14
-                      }
-                    }
-                  ]
-                },
-                {
-                  "type": "Column",
-                  "width": "stretch",
-                  "items": [
-                    {
-                      "type": "TextBlock",
-                      "key": "dueDate",
-                      "style": {
-                        "size": "Little",
-                        "color": "Tertiary",
-                        "font": "Default",
-                        "colorMode": "Light"
-                      }
-                    }
-                  ]
-                },
-                {
-                  "type": "Column",
-                  "width": "stretch",
-                  "items": [
-                    {
-                      "type": "TextBlock",
-                      "key": "status",
-                      "style": {
-                        "size": "Little",
-                        "color": "Tertiary",
-                        "font": "Default",
-                        "colorMode": "Light"
-                      }
-                    }
-                  ]
                 }
               ]
             }
+
           ]
         }
       ]

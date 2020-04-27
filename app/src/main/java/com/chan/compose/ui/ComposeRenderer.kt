@@ -47,18 +47,23 @@ private fun JSONObject.inflateComponent(value: (String)-> Any?) {
 @Composable // Orientation - Horizontal
 private fun JSONObject.inflateColumnSetView(value: (String)-> Any?) {
     this.optJSONArray("columns")?.let { columns ->
-        Row(arrangement = Arrangement.Center, modifier = Modifier.padding(8.dp)) {
+        FlowRow() {
             for (i in 0 until columns.length()) {
                 columns.getJSONObject(i)?.inflateComponent(value)
             }
         }
+        /*Row(modifier = Modifier.padding(8.dp) + Modifier.wrapContentHeight(align = Alignment.Center)) {
+            for (i in 0 until columns.length()) {
+                columns.getJSONObject(i)?.inflateComponent(value)
+            }
+        }*/
     }
 }
 
 @Composable // Orientation - Vertical
 private fun JSONObject.inflateColumnView(value: (String) -> Any?) {
     this.optJSONArray("items")?.let { items ->
-        Column(modifier = Modifier.padding(start = 4.dp, end = 4.dp), arrangement = Arrangement.Bottom) {
+        Column(modifier = Modifier.padding(start = 4.dp, end = 4.dp) + Modifier.wrapContentHeight(align = Alignment.Center)) {
             for (i in 0 until items.length()) {
                 items.getJSONObject(i)?.inflateComponent(value)
             }
@@ -82,7 +87,7 @@ private fun JSONObject.inflateComponentView(value: (String) -> Any?) {
                     modifier = Modifier.wrapContentHeight()) {
                     Image(
                         asset = vectorResource(id = resId),
-                        modifier = Modifier.preferredSizeIn(maxWidth = 16.dp, maxHeight = 16.dp),
+                        modifier = Modifier.preferredSizeIn(maxWidth = 16.dp, maxHeight = 16.dp) + Modifier.padding(top = 2.dp),
                         alignment = Alignment.Center
                     )
                 }
@@ -92,14 +97,19 @@ private fun JSONObject.inflateComponentView(value: (String) -> Any?) {
         "Image" -> {
             (value(key) as? String)?.let {
                 val resId = ContextAmbient.current.resources.getIdentifier(it, "drawable", ContextAmbient.current.packageName)
-                Box(gravity = ContentGravity.Center,
+                /*Box(gravity = ContentGravity.Center,
                     modifier = Modifier.wrapContentHeight()) {
                     Image(
                         asset = vectorResource(id = resId),
                         modifier = Modifier.preferredSizeIn(maxWidth = 16.dp, maxHeight = 16.dp),
                         alignment = Alignment.Center
                     )
-                }
+                }*/
+                Image(
+                    asset = vectorResource(id = resId),
+                    modifier = Modifier.preferredSizeIn(maxWidth = 16.dp, maxHeight = 16.dp) + Modifier.padding(top = 2.dp),
+                    alignment = Alignment.Center
+                )
             }
         }
         else -> {
