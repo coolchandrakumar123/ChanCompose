@@ -6,22 +6,24 @@ import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.util.Log
 import android.widget.FrameLayout
-import androidx.annotation.IdRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.Composable
-import androidx.fragment.app.FragmentManager
+import androidx.ui.core.Alignment
+import androidx.ui.core.Modifier
 import androidx.ui.core.setContent
+import androidx.ui.foundation.Box
 import androidx.ui.foundation.Text
-import androidx.ui.layout.Column
-import androidx.ui.layout.Row
+import androidx.ui.layout.Stack
+import androidx.ui.layout.wrapContentSize
+import androidx.ui.layout.wrapContentWidth
 import androidx.ui.material.MaterialTheme
 import androidx.ui.tooling.preview.Preview
-import com.chan.compose.ui.inflateImageView
+import androidx.ui.unit.dp
+import com.chan.compose.ui.composePhotoNameExperiment
+import com.chan.compose.ui.composeWeightExperiment
 import com.chan.compose.ui.itemViewHolder
-import kotlinx.android.synthetic.main.zplatform_fragment_list.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import org.json.JSONObject
 import java.io.BufferedInputStream
@@ -58,14 +60,22 @@ class MainActivity : AppCompatActivity() {
 
     private fun setCheckUI() {
         contentView.setContent {
-            Column {
+            /*Column {
                 Greeting("Chandran Check UI Parsing")
                 inflateImageView(this@MainActivity::getImage)
-            }
+            }*/
+            /*Box(modifier = Modifier.wrapContentSize()) {
+                //textView("Chandran Check UI Parsing")
+                //textView("Second Line")
+                composePhotoNameExperiment("CH")
+                composePhotoNameExperiment("KU", 40.dp, 40.dp)
+            }*/
+            composeWeightExperiment()
         }
     }
 
-    private fun getImage(onFailed: (String) -> Unit, onSuccess: (Bitmap) -> Unit) {
+    private fun getImage(recordId: String, onFailed: (String) -> Unit, onSuccess: (Bitmap) -> Unit) {
+        Log.d("ChanLog", "recordId: $recordId");
         CoroutineScope(Dispatchers.IO).launch {
             getBitmapFromURL("846548e5cd1229c865b3181850095458")?.let {
                 Log.d("ChanLog", "Success: ");
