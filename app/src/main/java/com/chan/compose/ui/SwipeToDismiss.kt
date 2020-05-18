@@ -16,52 +16,210 @@ package com.chan.compose.ui
  * limitations under the License.
  */
 
-import androidx.animation.AnimationEndReason
-import androidx.animation.ExponentialDecay
-import androidx.animation.FastOutSlowInEasing
-import androidx.animation.PhysicsBuilder
-import androidx.animation.TargetAnimation
-import androidx.animation.fling
+import android.util.Log
+import android.widget.Toast
+import androidx.animation.*
 import androidx.compose.Composable
+import androidx.compose.MutableState
 import androidx.compose.remember
 import androidx.compose.state
 import androidx.ui.animation.animatedFloat
-import androidx.ui.core.DensityAmbient
-import androidx.ui.core.DrawScope
-import androidx.ui.core.Modifier
+import androidx.ui.core.*
 import androidx.ui.core.gesture.DragObserver
 import androidx.ui.core.gesture.rawDragGestureFilter
-import androidx.ui.core.onPositioned
+import androidx.ui.foundation.Box
 import androidx.ui.foundation.Canvas
 import androidx.ui.foundation.Text
 import androidx.ui.geometry.Rect
 import androidx.ui.graphics.Color
 import androidx.ui.graphics.Paint
-import androidx.ui.layout.Column
-import androidx.ui.layout.fillMaxWidth
-import androidx.ui.layout.padding
-import androidx.ui.layout.preferredHeight
+import androidx.ui.layout.*
+import androidx.ui.material.Button
 import androidx.ui.text.TextStyle
+import androidx.ui.text.font.FontWeight
 import androidx.ui.unit.PxPosition
 import androidx.ui.unit.dp
 import androidx.ui.unit.sp
 import kotlin.math.sign
 
+/**
+ * https://cs.android.com/androidx/platform/frameworks/support/+/androidx-master-dev:ui/ui-animation/integration-tests/animation-demos/src/main/java/androidx/ui/animation/demos/SwipeToDismissDemo.kt
+ */
+
 @Composable
 fun SwipeToDismissDemo() {
-    Column {
-        SwipeToDismiss()
+    swipeLeftToDismiss()
+    /*Column(modifier = Modifier.padding(top = 24.dp) ) {
+        //SwipeToDismiss()
         Text(
             "Swipe up to dismiss",
             style = TextStyle(fontSize = 30.sp),
             modifier = Modifier.padding(40.dp)
         )
-    }
+    }*/
 }
 
 private val height = 1600f
 private val itemHeight = 1600f * 2 / 3f
 private val padding = 10f
+
+@Composable
+private fun swipeLeftToDismiss() {
+    val itemLeft = animatedFloat(0f)
+    //val index = state { 0 }
+    val itemWidth = state { 0f }
+    val isFlinging = state { false }
+    val modifier = Modifier.rawDragGestureFilter(dragObserver = object : DragObserver {
+        override fun onStart(downPosition: PxPosition) {
+            Log.d("ChanLog", "onStart: ${downPosition.x.value}, ${downPosition.y.value}");
+            itemLeft.setBounds(0f, itemWidth.value/3)
+            /*itemBottom.setBounds(0f, height)
+            if (isFlinging.value && itemBottom.targetValue < 100f) {
+                reset()
+            }*/
+        }
+
+        private fun reset() {
+            itemLeft.snapTo(0f)
+            /*index.value--
+            if (index.value < 0) {
+                index.value += colors.size
+            }*/
+        }
+
+        override fun onDrag(dragDistance: PxPosition): PxPosition {
+            Log.d("ChanLog", "onDrag: ${dragDistance.x.value}, ${dragDistance.y.value}");
+            itemLeft.snapTo(itemLeft.targetValue + dragDistance.x.value)
+            return dragDistance
+        }
+
+        private fun adjustTarget(velocity: Float): (Float) -> TargetAnimation? {
+            return { target: Float ->
+                // The velocity is fast enough to fly off screen
+                if (target <= 0) {
+                    null
+                } else {
+                    val animation = PhysicsBuilder<Float>(dampingRatio = 0.8f, stiffness = 300f)
+                    val projectedTarget = target + sign(velocity) * 0.2f * height
+                    if (projectedTarget < 0.6 * height) {
+                        TargetAnimation(0f, animation)
+                    } else {
+                        TargetAnimation(height, animation)
+                    }
+                }
+            }
+        }
+
+        override fun onStop(velocity: PxPosition) {
+            Log.d("ChanLog", "onStop: ${velocity.x.value}, ${velocity.y.value}");
+            //isFlinging.value = true
+            /*itemLeft.fling(velocity.x.value,
+                ExponentialDecay(3.0f),
+                adjustTarget(velocity.x.value),
+                onEnd = { endReason, final, _ ->
+                    isFlinging.value = false
+                    if (endReason != AnimationEndReason.Interrupted && final == 0f) {
+                        //reset()
+                    }
+                })*/
+        }
+    })
+
+    val paint = remember { Paint() }
+    paint.color = Color.Red
+    /*Box(
+        modifier = modifier.drawBehind {
+        drawRect(
+            rect = Rect(
+                itemLeft.value,
+                0f,
+                itemWidth.value,
+                120f
+            ),
+            paint = paint
+        )
+    }) {
+        Text(
+            text = "Swipe Item",
+            style = TextStyle(
+                color = Color.White,
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Bold
+            )
+        )
+    }*/
+
+        /*.drawBehind {
+            drawRect(
+                rect = Rect(
+                    itemLeft.value,
+                    0f,
+                    itemWidth.value,
+                    120f
+                ),
+                paint = paint
+            )
+        }*/
+
+    Box(
+        modifier = modifier.drawLayer(
+            translationX = itemLeft.value
+        )
+            .fillMaxWidth()
+            .preferredHeight(120.dp)
+            .onPositioned { coordinates ->
+                //itemWidth.value = coordinates.size.width.value * 2 / 3f
+                itemWidth.value = coordinates.size.width.value.toFloat()
+            },
+        backgroundColor = Color.Blue,
+        gravity = Alignment.Center
+    ) {
+        Text(
+            text = "Swipe Item",
+            style = TextStyle(
+                color = Color.White,
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Bold
+            )
+        )
+    }
+    Button(onClick = {
+        Log.d("ChanLog", "Clicked: Button");
+        //Toast.makeText(ContextAmbient.current, "Clicked", Toast.LENGTH_SHORT).show()
+    }, backgroundColor = Color.Blue,
+        modifier = Modifier.padding(all = 16.dp).drawOpacity(itemLeft.value/300f)) {
+        Text(
+            text = "Assign",
+            style = TextStyle(
+                color = Color.Red,
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Bold
+            )
+        )
+    }
+    //swipeRevealItem(modifier, itemLeft, itemWidth, paint)
+}
+
+@Composable
+private fun swipeRevealItem(modifier: Modifier, itemLeft: AnimatedFloat, itemWidth: MutableState<Float>, paint: Paint) {
+    Canvas(
+        modifier.fillMaxWidth()
+            .preferredHeight(120.dp)
+            .onPositioned { coordinates ->
+                itemWidth.value = coordinates.size.width.value.toFloat()
+            }
+    ) {
+        drawRect(
+            rect = Rect(
+                itemLeft.value,
+                0f,
+                itemWidth.value,
+                120f
+            ),
+            paint = paint
+        )
+    }
+}
 
 @Composable
 private fun SwipeToDismiss() {

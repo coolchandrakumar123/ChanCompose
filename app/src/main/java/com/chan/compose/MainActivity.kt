@@ -61,7 +61,8 @@ class MainActivity : AppCompatActivity() {
     private fun setCheckUI() {
         contentView.setContent(Recomposer.current()) {
             //inflateTestCompose()
-            composeAdapter()
+            //composeAdapter()
+            SwipeToDismissDemo()
         }
     }
 
