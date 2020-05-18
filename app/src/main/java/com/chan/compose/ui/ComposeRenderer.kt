@@ -19,7 +19,7 @@ import org.json.JSONObject
 
 @Composable
 fun itemViewHolder(pattern: JSONArray, values: HashMap<String, Any?>) {
-    Column(modifier = Modifier.drawBackground(color = Color.White) + Modifier.wrapContentHeight(Alignment.Center), arrangement = Arrangement.Center) {
+    Column(modifier = Modifier.drawBackground(color = Color.White) + Modifier.wrapContentHeight(Alignment.Center)) {
         for (i in 0 until pattern.length()) {
             //val uiData = pattern.getJSONObject()
             pattern.getJSONObject(i)?.let { component ->
@@ -83,8 +83,7 @@ private fun JSONObject.inflateComponentView(value: (String) -> Any?) {
             (value(key) as? String)?.let {
                 val resId = ContextAmbient.current.resources.getIdentifier(it, "drawable", ContextAmbient.current.packageName)
                 //colorFilter = ColorFilter.tint(Color.Blue),
-                Box(gravity = ContentGravity.Center,
-                    modifier = Modifier.wrapContentHeight()) {
+                Box(gravity = ContentGravity.Center) {
                     Image(
                         asset = vectorResource(id = resId),
                         modifier = Modifier.preferredSizeIn(maxWidth = 16.dp, maxHeight = 16.dp) + Modifier.padding(top = 2.dp),

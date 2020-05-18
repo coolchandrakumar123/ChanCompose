@@ -8,6 +8,8 @@ import android.util.Log
 import android.widget.FrameLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.Composable
+import androidx.compose.Recomposer
+import androidx.compose.frames.modelListOf
 import androidx.ui.core.Alignment
 import androidx.ui.core.Modifier
 import androidx.ui.core.setContent
@@ -19,9 +21,7 @@ import androidx.ui.layout.wrapContentWidth
 import androidx.ui.material.MaterialTheme
 import androidx.ui.tooling.preview.Preview
 import androidx.ui.unit.dp
-import com.chan.compose.ui.composePhotoNameExperiment
-import com.chan.compose.ui.composeWeightExperiment
-import com.chan.compose.ui.itemViewHolder
+import com.chan.compose.ui.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -59,50 +59,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setCheckUI() {
-        contentView.setContent {
-            /*Column {
-                Greeting("Chandran Check UI Parsing")
-                inflateImageView(this@MainActivity::getImage)
-            }*/
-            /*Box(modifier = Modifier.wrapContentSize()) {
-                //textView("Chandran Check UI Parsing")
-                //textView("Second Line")
-                composePhotoNameExperiment("CH")
-                composePhotoNameExperiment("KU", 40.dp, 40.dp)
-            }*/
-            composeWeightExperiment()
-        }
-    }
-
-    private fun getImage(recordId: String, onFailed: (String) -> Unit, onSuccess: (Bitmap) -> Unit) {
-        Log.d("ChanLog", "recordId: $recordId");
-        CoroutineScope(Dispatchers.IO).launch {
-            getBitmapFromURL("846548e5cd1229c865b3181850095458")?.let {
-                Log.d("ChanLog", "Success: ");
-                CoroutineScope(Dispatchers.Main).launch {
-                    onSuccess(it)
-                }
-            }?: kotlin.run {
-                CoroutineScope(Dispatchers.Main).launch {
-                    onFailed("Failed")
-                }
-            }
-        }
-    }
-
-    private fun getBitmapFromURL(oAuthToken: String): Bitmap? {
-        return try {
-            val url = URL("https://desk.zoho.com/api/v1/agents/196608000009628161/photo?orgId=648638721")
-            val urlConnection = url.openConnection() as HttpURLConnection
-            urlConnection.requestMethod = "GET"//NO I18N
-            urlConnection.setRequestProperty("Authorization", "Zoho-authtoken $oAuthToken")
-            urlConnection.connect()
-            Log.d("ChanLog", "responseCode: ${urlConnection.responseCode}");
-            val inputStream = BufferedInputStream(urlConnection.inputStream)
-            BitmapFactory.decodeStream(inputStream)
-        } catch (e: IOException) {
-            e.printStackTrace()
-            null
+        contentView.setContent(Recomposer.current()) {
+            //inflateTestCompose()
+            composeAdapter()
         }
     }
 
