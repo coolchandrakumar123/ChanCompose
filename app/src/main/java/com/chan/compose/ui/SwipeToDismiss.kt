@@ -17,12 +17,8 @@ package com.chan.compose.ui
  */
 
 import android.util.Log
-import android.widget.Toast
 import androidx.animation.*
-import androidx.compose.Composable
-import androidx.compose.MutableState
-import androidx.compose.remember
-import androidx.compose.state
+import androidx.compose.*
 import androidx.ui.animation.animatedFloat
 import androidx.ui.core.*
 import androidx.ui.core.gesture.DragObserver
@@ -30,10 +26,13 @@ import androidx.ui.core.gesture.rawDragGestureFilter
 import androidx.ui.foundation.Box
 import androidx.ui.foundation.Canvas
 import androidx.ui.foundation.Text
+import androidx.ui.foundation.gestures.DragDirection
+import androidx.ui.foundation.gestures.draggable
 import androidx.ui.geometry.Rect
 import androidx.ui.graphics.Color
 import androidx.ui.graphics.Paint
 import androidx.ui.layout.*
+import androidx.ui.material.AlertDialog
 import androidx.ui.material.Button
 import androidx.ui.text.TextStyle
 import androidx.ui.text.font.FontWeight
@@ -47,8 +46,9 @@ import kotlin.math.sign
  */
 
 @Composable
-fun SwipeToDismissDemo() {
-    swipeLeftToDismiss()
+fun swipeToDismissDemo() {
+    swipeUsingDraggable()
+    //swipeLeftToDismiss()
     /*Column(modifier = Modifier.padding(top = 24.dp) ) {
         //SwipeToDismiss()
         Text(
@@ -127,69 +127,12 @@ private fun swipeLeftToDismiss() {
 
     val paint = remember { Paint() }
     paint.color = Color.Red
-    /*Box(
-        modifier = modifier.drawBehind {
-        drawRect(
-            rect = Rect(
-                itemLeft.value,
-                0f,
-                itemWidth.value,
-                120f
-            ),
-            paint = paint
-        )
-    }) {
-        Text(
-            text = "Swipe Item",
-            style = TextStyle(
-                color = Color.White,
-                fontSize = 20.sp,
-                fontWeight = FontWeight.Bold
-            )
-        )
-    }*/
-
-        /*.drawBehind {
-            drawRect(
-                rect = Rect(
-                    itemLeft.value,
-                    0f,
-                    itemWidth.value,
-                    120f
-                ),
-                paint = paint
-            )
-        }*/
-
-    Box(
-        modifier = modifier.drawLayer(
-            translationX = itemLeft.value
-        )
-            .fillMaxWidth()
-            .preferredHeight(120.dp)
-            .onPositioned { coordinates ->
-                //itemWidth.value = coordinates.size.width.value * 2 / 3f
-                itemWidth.value = coordinates.size.width.value.toFloat()
-            },
-        backgroundColor = Color.Blue,
-        gravity = Alignment.Center
-    ) {
-        Text(
-            text = "Swipe Item",
-            style = TextStyle(
-                color = Color.White,
-                fontSize = 20.sp,
-                fontWeight = FontWeight.Bold
-            )
-        )
-    }
     Button(onClick = {
         Log.d("ChanLog", "Clicked: Button");
-        //Toast.makeText(ContextAmbient.current, "Clicked", Toast.LENGTH_SHORT).show()
-    }, backgroundColor = Color.Blue,
-        modifier = Modifier.padding(all = 16.dp).drawOpacity(itemLeft.value/300f)) {
+    }, backgroundColor = Color.LightGray,
+        modifier = Modifier.padding(all = 16.dp).drawOpacity(1f)) { //itemLeft.value/300f
         Text(
-            text = "Assign",
+            text = "Delete",
             style = TextStyle(
                 color = Color.Red,
                 fontSize = 20.sp,
@@ -197,6 +140,31 @@ private fun swipeLeftToDismiss() {
             )
         )
     }
+    Stack(modifier = Modifier.drawLayer(
+        translationX = itemLeft.value
+    )) {
+        Box(
+            modifier = modifier
+                .fillMaxWidth()
+                .preferredHeight(120.dp)
+                .onPositioned { coordinates ->
+                    //itemWidth.value = coordinates.size.width.value * 2 / 3f
+                    itemWidth.value = coordinates.size.width.value.toFloat()
+                },
+            backgroundColor = Color.Blue,
+            gravity = Alignment.Center
+        ) {
+            Text(
+                text = "Swipe Item",
+                style = TextStyle(
+                    color = Color.White,
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold
+                )
+            )
+        }
+    }
+
     //swipeRevealItem(modifier, itemLeft, itemWidth, paint)
 }
 
@@ -218,6 +186,79 @@ private fun swipeRevealItem(modifier: Modifier, itemLeft: AnimatedFloat, itemWid
             ),
             paint = paint
         )
+    }
+}
+
+@Composable
+fun swipeUsingDraggable() {
+    val itemLeft = animatedFloat(0f)
+    val itemWidth = state { 0f }
+    itemLeft.setBounds(0f, itemWidth.value/3)
+    val draggable = Modifier.draggable(
+        dragDirection = DragDirection.Horizontal,
+        onDragDeltaConsumptionRequested = { delta ->
+            Log.d("ChanLog", "onDragDeltaConsumptionRequested: $delta");
+            val old = itemLeft.value
+            itemLeft.snapTo(itemLeft.value + delta)
+            //itemLeft.value - old
+            delta
+        },
+        onDragStopped = {
+            Log.d("ChanLog", "onDragStopped: $it");
+            //position.fling(flingConfig, it)
+        }
+    )
+
+    val paint = remember { Paint() }
+    paint.color = Color.Red
+    Button(
+        onClick = {
+            Log.d("ChanLog", "Clicked: Button");
+        }, backgroundColor = Color.LightGray,
+        modifier = Modifier.padding(all = 16.dp)
+            .drawOpacity(1f)
+            .offset(
+                x = 0.dp,
+                y = 0.dp
+            )
+    ) { //itemLeft.value/300f
+        Text(
+            text = "Delete",
+            style = TextStyle(
+                color = Color.Red,
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Bold
+            )
+        )
+    }
+    Stack(modifier = Modifier.offset(
+        x = itemLeft.value.dp,
+        y = 0.dp
+    )) {
+        Box(
+            modifier = draggable
+                .fillMaxWidth()
+                .preferredHeight(120.dp)
+                .onPositioned { coordinates ->
+                    //itemWidth.value = coordinates.size.width.value * 2 / 3f
+                    itemWidth.value = coordinates.size.width.value.toFloat()
+                },
+            backgroundColor = Color.Blue,
+            gravity = Alignment.Center
+        ) {
+            Button(onClick = {
+                Log.d("ChanLog", "Clicked: SwipeItem");
+            }) {
+                Text(
+                    text = "Swipe Item",
+                    style = TextStyle(
+                        color = Color.White,
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                )
+            }
+        }
     }
 }
 

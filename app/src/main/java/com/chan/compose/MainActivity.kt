@@ -62,7 +62,7 @@ class MainActivity : AppCompatActivity() {
         contentView.setContent(Recomposer.current()) {
             //inflateTestCompose()
             //composeAdapter()
-            SwipeToDismissDemo()
+            swipeToDismissDemo()
         }
     }
 
