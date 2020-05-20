@@ -64,7 +64,7 @@ private val itemHeight = 1600f * 2 / 3f
 private val padding = 10f
 
 @Composable
-private fun swipeLeftToDismiss() {
+private fun swipeCompose() {
     val itemLeft = animatedFloat(0f)
     //val index = state { 0 }
     val itemWidth = state { 0f }

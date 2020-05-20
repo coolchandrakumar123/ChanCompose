@@ -103,7 +103,9 @@ fun adapterSwipeItem(chanItem: ChanItem, positionObserver: (Int) -> Unit) {
     onActive(callback = {
         positionObserver(chanItem.position)
     })
-    swipeLeftToDismiss(bgChildren = {
+    swipeCompose(
+        swipeDirection = SwipeDirection.RIGHT,
+        bgChildren = {
         Button(onClick = {
             Log.d("ChanLog", "Clicked: Button-${chanItem.position}");
         }, backgroundColor = Color.LightGray,
@@ -134,49 +136,53 @@ fun adapterSwipeItem(chanItem: ChanItem, positionObserver: (Int) -> Unit) {
     })
 }
 
+enum class SwipeDirection {
+    LEFT, RIGHT
+}
+
 @Composable
-private fun swipeLeftToDismiss(fgBackgroundColor: Color = MaterialTheme.colors.primary, bgChildren: @Composable() () -> Unit, fgChildren: @Composable() () -> Unit) {
-    val itemLeft = animatedFloat(0f)
+private fun swipeCompose(swipeDirection: SwipeDirection = SwipeDirection.LEFT, fgBackgroundColor: Color = MaterialTheme.colors.primary, bgChildren: @Composable() () -> Unit, fgChildren: @Composable() () -> Unit) {
+    val itemPosition = animatedFloat(0f)
     val itemWidth = state { 0f }
     val isFlinging = state { false }
+    val xMid = itemWidth.value/2 * (if(swipeDirection == SwipeDirection.LEFT) 1 else -1)
     val modifier = Modifier.rawDragGestureFilter(dragObserver = object : DragObserver {
         override fun onStart(downPosition: PxPosition) {
-            val xMid = itemWidth.value/2
-            if(downPosition.x.value < xMid) {
-                itemLeft.setBounds(0f, xMid)
-                if (isFlinging.value && itemLeft.targetValue < 100f) {
-                    reset()
-                }
+            if(swipeDirection == SwipeDirection.LEFT) {
+                itemPosition.setBounds(0f, xMid)
+            } else {
+                itemPosition.setBounds(xMid, 0f)
+            }
+            if (isFlinging.value && itemPosition.targetValue < 100f) {
+                reset()
             }
         }
 
         private fun reset() {
-            itemLeft.snapTo(0f)
+            itemPosition.snapTo(0f)
         }
 
         override fun onDrag(dragDistance: PxPosition): PxPosition {
-            val xMid = itemWidth.value/2
-            if(dragDistance.x.value < xMid) {
-                itemLeft.snapTo(itemLeft.targetValue + dragDistance.x.value)
-            }
+            itemPosition.snapTo(itemPosition.targetValue + dragDistance.x.value)
             return dragDistance
         }
 
         private fun adjustTarget(velocity: Float): (Float) -> TargetAnimation? {
             return { target: Float ->
                 // The velocity is fast enough to fly off screen
-                if (target <= 0) {
+                /*if(target <= 0) {
                     null
                 } else {
-                    val animation = PhysicsBuilder<Float>(dampingRatio = 0.8f, stiffness = 300f)
-                    val projectedTarget = target + sign(velocity) * 0.2f * itemWidth.value
-                    val offset = 0.2 * itemWidth.value
-                    Log.d("ChanLog", "velocity: $velocity, offset: $offset, projectedTarget: $projectedTarget");
-                    if (projectedTarget < offset) {
-                        TargetAnimation(0f, animation)
-                    } else {
-                        TargetAnimation(itemWidth.value/2, animation)
-                    }
+                }*/
+                val targetOffset = if (target <= 0) -target else target
+                val animation = PhysicsBuilder<Float>(dampingRatio = 0.8f, stiffness = 300f)
+                val projectedTarget = targetOffset + sign(velocity) * 0.2f * itemWidth.value
+                val offset = 0.2 * itemWidth.value
+                Log.d("ChanLog", "target: $target, velocity: $velocity, offset: $offset, projectedTarget: $projectedTarget");
+                if (projectedTarget < offset) {
+                    TargetAnimation(0f, animation)
+                } else {
+                    TargetAnimation(xMid, animation)
                 }
             }
         }
@@ -184,7 +190,7 @@ private fun swipeLeftToDismiss(fgBackgroundColor: Color = MaterialTheme.colors.p
         override fun onStop(velocity: PxPosition) {
             //Log.d("ChanLog", "onStop: ${velocity.x.value}, ${velocity.y.value}");
             isFlinging.value = true
-            itemLeft.fling(velocity.x.value,
+            itemPosition.fling(velocity.x.value,
                 ExponentialDecay(3.0f),
                 adjustTarget(velocity.x.value),
                 onEnd = { endReason, final, _ ->
@@ -197,13 +203,10 @@ private fun swipeLeftToDismiss(fgBackgroundColor: Color = MaterialTheme.colors.p
         }
     })
 
-    val paint = remember { Paint() }
-    paint.color = Color.Red
     Stack {
         bgChildren()
-
         Stack(modifier = Modifier.drawLayer(
-            translationX = itemLeft.value
+            translationX = itemPosition.value
         )) {
             Box(
                 modifier = modifier
