@@ -19,7 +19,7 @@ import org.json.JSONObject
 
 @Composable
 fun itemViewHolder(pattern: JSONArray, values: HashMap<String, Any?>) {
-    Column(modifier = Modifier.drawBackground(color = Color.White) + Modifier.wrapContentHeight(Alignment.Center)) {
+    Column(modifier = Modifier.drawBackground(color = Color.White) + Modifier.wrapContentHeight(Alignment.CenterVertically)) {
         for (i in 0 until pattern.length()) {
             //val uiData = pattern.getJSONObject()
             pattern.getJSONObject(i)?.let { component ->
@@ -63,7 +63,7 @@ private fun JSONObject.inflateColumnSetView(value: (String)-> Any?) {
 @Composable // Orientation - Vertical
 private fun JSONObject.inflateColumnView(value: (String) -> Any?) {
     this.optJSONArray("items")?.let { items ->
-        Column(modifier = Modifier.padding(start = 4.dp, end = 4.dp) + Modifier.wrapContentHeight(align = Alignment.Center)) {
+        Column(modifier = Modifier.padding(start = 4.dp, end = 4.dp) + Modifier.wrapContentHeight(align = Alignment.CenterVertically)) {
             for (i in 0 until items.length()) {
                 items.getJSONObject(i)?.inflateComponent(value)
             }

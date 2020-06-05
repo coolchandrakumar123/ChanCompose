@@ -5,7 +5,9 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.util.Log
+import android.webkit.WebView
 import android.widget.FrameLayout
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.Composable
 import androidx.compose.Recomposer
@@ -38,6 +40,10 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.zplatform_fragment_list)
         contentView = findViewById<FrameLayout>(R.id.content)
+        /*contentView.addView( WebView(this).apply {
+            //loadUrl("https://www.google.com/")
+            loadData("ChandranWebView", "text/html", "UTF-8")
+        })*/
         /*findViewById<FrameLayout>(R.id.content)?.setContent {
             Greeting("Chandran Android")
         }*/
@@ -60,9 +66,12 @@ class MainActivity : AppCompatActivity() {
 
     private fun setCheckUI() {
         contentView.setContent(Recomposer.current()) {
-            //inflateTestCompose()
-            composeAdapter()
+            inflateTestCompose()
+            //composeAdapter()
+            //verticalScroller()
             //swipeToDismissDemo()
+            //swipeToRefreshCheck()
+            //composeSimpleAdapter()
         }
     }
 

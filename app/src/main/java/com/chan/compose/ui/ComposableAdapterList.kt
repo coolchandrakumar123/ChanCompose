@@ -7,22 +7,21 @@ import androidx.ui.animation.animatedFloat
 import androidx.ui.core.*
 import androidx.ui.core.gesture.DragObserver
 import androidx.ui.core.gesture.rawDragGestureFilter
-import androidx.ui.foundation.AdapterList
-import androidx.ui.foundation.Box
-import androidx.ui.foundation.ContentGravity
-import androidx.ui.foundation.Text
+import androidx.ui.foundation.*
+import androidx.ui.foundation.animation.AnchorsFlingConfig
+import androidx.ui.foundation.animation.FlingConfig
+import androidx.ui.foundation.animation.fling
+import androidx.ui.foundation.gestures.DragDirection
+import androidx.ui.foundation.gestures.draggable
 import androidx.ui.graphics.Color
-import androidx.ui.graphics.Paint
-import androidx.ui.layout.Stack
-import androidx.ui.layout.fillMaxWidth
-import androidx.ui.layout.padding
-import androidx.ui.layout.preferredHeight
+import androidx.ui.layout.*
 import androidx.ui.material.Button
 import androidx.ui.material.MaterialTheme
 import androidx.ui.text.TextStyle
 import androidx.ui.text.font.FontWeight
 import androidx.ui.unit.PxPosition
 import androidx.ui.unit.dp
+import androidx.ui.unit.px
 import androidx.ui.unit.sp
 import kotlin.math.sign
 
@@ -37,6 +36,29 @@ data class ChanItem(
     val title: String,
     val position: Int
 )
+
+@Composable
+fun composeSimpleAdapter() {
+    val listData = ArrayList<ChanItem>()
+    for (i in 1..50) {
+        listData.add(ChanItem("Item - $i", i))
+
+    }
+
+    AdapterList(data = listData) { item ->
+        key(inputs = *arrayOf(item.position)) {
+            Button(
+                modifier = Modifier.padding(all = 8.dp),
+                enabled = false,
+                onClick = {
+
+                }
+            ) {
+                Text(text = "${item.title} , position: ${item.position}")
+            }
+        }
+    }
+}
 
 @Composable
 fun composeAdapter() {
@@ -71,7 +93,7 @@ fun scrollListenAdapterList(chanItemList: ChanItemList, positionObserver: (Int) 
     val updateStatus = state { chanItemList.isUpdated }
     if(updateStatus.value) {
         AdapterList(data = chanItemList.data) {
-            key(v1 = it.position) {
+            key(inputs = *arrayOf(it.position)) {
                 //adapterItem(it, positionObserver)
                 adapterSwipeItem(it, positionObserver)
             }
@@ -104,7 +126,7 @@ fun adapterSwipeItem(chanItem: ChanItem, positionObserver: (Int) -> Unit) {
         positionObserver(chanItem.position)
     })
     swipeCompose(
-        swipeDirection = SwipeDirection.RIGHT,
+        swipeDirection = SwipeDirection.LEFT,
         bgChildren = {
         Button(onClick = {
             Log.d("ChanLog", "Clicked: Button-${chanItem.position}");
@@ -145,16 +167,22 @@ private fun swipeCompose(swipeDirection: SwipeDirection = SwipeDirection.LEFT, f
     val itemPosition = animatedFloat(0f)
     val itemWidth = state { 0f }
     val isFlinging = state { false }
+    val isDragging = state { false }
     val xMid = itemWidth.value/2 * (if(swipeDirection == SwipeDirection.LEFT) 1 else -1)
-    val modifier = Modifier.rawDragGestureFilter(dragObserver = object : DragObserver {
+    val modifier = Modifier.rawDragGestureFilter(
+        dragObserver = object : DragObserver {
         override fun onStart(downPosition: PxPosition) {
-            if(swipeDirection == SwipeDirection.LEFT) {
-                itemPosition.setBounds(0f, xMid)
-            } else {
-                itemPosition.setBounds(xMid, 0f)
-            }
-            if (isFlinging.value && itemPosition.targetValue < 100f) {
-                reset()
+            Log.d("ChanLog", "onStart x=: ${downPosition.x.value}, y= ${downPosition.y.value} ");
+            //isDragging.value =
+            if(downPosition.x.value < xMid) {
+                if(swipeDirection == SwipeDirection.LEFT) {
+                    itemPosition.setBounds(0f, xMid)
+                } else {
+                    itemPosition.setBounds(xMid, 0f)
+                }
+                if (isFlinging.value && itemPosition.targetValue < xMid) {
+                    reset()
+                }
             }
         }
 
@@ -163,26 +191,29 @@ private fun swipeCompose(swipeDirection: SwipeDirection = SwipeDirection.LEFT, f
         }
 
         override fun onDrag(dragDistance: PxPosition): PxPosition {
-            itemPosition.snapTo(itemPosition.targetValue + dragDistance.x.value)
+            Log.d("ChanLog", "Drag x=: ${dragDistance.x.value}, y= ${dragDistance.y.value} ");
+            if(dragDistance.x.value < xMid) {
+                itemPosition.snapTo(itemPosition.targetValue + dragDistance.x.value)
+            }
             return dragDistance
         }
 
         private fun adjustTarget(velocity: Float): (Float) -> TargetAnimation? {
             return { target: Float ->
                 // The velocity is fast enough to fly off screen
-                /*if(target <= 0) {
+                if(target <= 0) {
                     null
                 } else {
-                }*/
-                val targetOffset = if (target <= 0) -target else target
-                val animation = PhysicsBuilder<Float>(dampingRatio = 0.8f, stiffness = 300f)
-                val projectedTarget = targetOffset + sign(velocity) * 0.2f * itemWidth.value
-                val offset = 0.2 * itemWidth.value
-                Log.d("ChanLog", "target: $target, velocity: $velocity, offset: $offset, projectedTarget: $projectedTarget");
-                if (projectedTarget < offset) {
-                    TargetAnimation(0f, animation)
-                } else {
-                    TargetAnimation(xMid, animation)
+                    val targetOffset = if (target <= 0) -target else target
+                    val animation = PhysicsBuilder<Float>(dampingRatio = 0.8f, stiffness = 300f)
+                    val projectedTarget = targetOffset + sign(velocity) * 0.2f * itemWidth.value
+                    val offset = 0.2 * itemWidth.value
+                    Log.d("ChanLog", "target: $target, velocity: $velocity, offset: $offset, projectedTarget: $projectedTarget");
+                    if (projectedTarget < offset) {
+                        TargetAnimation(0f, animation)
+                    } else {
+                        TargetAnimation(xMid, animation)
+                    }
                 }
             }
         }
@@ -222,4 +253,124 @@ private fun swipeCompose(swipeDirection: SwipeDirection = SwipeDirection.LEFT, f
     }
 
     //swipeRevealItem(modifier, itemLeft, itemWidth, paint)
+}
+
+fun log(message: String) {
+    Log.d("ChanLog", message);
+}
+
+@Composable
+fun verticalScroller() {
+    Column( modifier = Modifier.padding(10.dp)) {
+        for (i in 0..50) {
+            SwipeArea(onSwiped = {
+                log("Swiped $it")
+            }, background = {
+                Button(modifier = Modifier.padding(10.dp), onClick = { log("Test") }) {
+                    //Icon(asset = Icons.Default)
+                    Text(text = "Delete")
+                }
+            }) {
+                Box(modifier = Modifier.fillMaxWidth().preferredHeight(100.dp), backgroundColor = if (i % 2 == 0) Color.LightGray else Color.Gray) {
+                    Text("Test message $i")
+                }
+            }
+        }
+    }
+}
+@Composable
+fun SwipeArea(modifier: Modifier = Modifier, onSwiped: (Boolean) -> Unit, background: @Composable() () -> Unit = { Box(
+    Modifier.fillMaxWidth()) }, children: @Composable() () -> Unit = emptyContent()
+) {
+    val position = animatedFloat(0f)
+    var flingConfig: FlingConfig = AnchorsFlingConfig(listOf(0f, 0f))
+    var isSwiped by state { false }
+    Stack(modifier = modifier.draggable(
+        startDragImmediately = position.isRunning,
+        dragDirection = DragDirection.Horizontal,
+        onDragStopped = {
+            position.fling(flingConfig, it)
+        },
+        onDragDeltaConsumptionRequested = { delta ->
+            position.snapTo(position.value + delta)
+            delta
+        }
+    )) {
+        val xOffset = with(DensityAmbient.current) { position.value.toDp() }
+        Box(modifier = Modifier.gravity(Alignment.CenterEnd).onChildPositioned {
+            val width = it.size.width.value.toFloat()
+            flingConfig = AnchorsFlingConfig(anchors = listOf(-width,0f), onAnimationEnd = { _,endValue,_ ->
+                //log("Fling end $endValue")
+                isSwiped = endValue != 0f
+                onSwiped(isSwiped)
+            })
+            position.setBounds(-width, 0f)
+        }) {
+            background()
+        }
+        Clickable(onClick = {}, enabled = !isSwiped) {
+            Box(
+                Modifier.offset(x = xOffset, y = 0.dp).zIndex(1f)
+            ) {
+                children()
+            }
+        }
+    }
+}
+
+@Composable
+fun swipeToRefreshCheck() {
+    SwipeToRefreshLayout(
+        refreshingState = false,
+        onRefresh = {
+
+        },
+        swipeIcon = {
+            Button(onClick = {}) {
+                Text(text = "IC")
+            }
+        }
+    ) {
+        composeAdapter()
+        /*VerticalScroller {
+            Column {
+                for(i in 1..20) {
+                    adapterItem(chanItem = ChanItem("Item - $i", i), positionObserver = {})
+                }
+            }
+        }*/
+    }
+}
+
+@Composable
+fun SwipeToRefreshLayout(
+    refreshingState: Boolean,
+    onRefresh: () -> Unit,
+    swipeIcon: @Composable() () -> Unit,
+    content: @Composable() () -> Unit
+) {
+    val size = with(DensityAmbient.current) { 100.dp.toPx().value }
+    //min is below - to hide
+    val min = -size
+    val max = size * 2
+    StateDraggable(
+        state = refreshingState,
+        onStateChange = { if (it) onRefresh() },
+        anchorsToState = listOf(min to false, max to true),
+        animationBuilder = TweenBuilder(),
+        dragDirection = DragDirection.Vertical,
+        minValue = min,
+        maxValue = max
+    ) { value ->
+        val dpOffset = with(DensityAmbient.current) {
+            (value.value * 0.5).px.toDp()
+        }
+        log("dpOffset: $dpOffset")
+        Stack {
+            content()
+            Box(modifier = Modifier.offset(0.dp, dpOffset), gravity = ContentGravity.TopCenter) {
+                swipeIcon()
+            }
+        }
+    }
 }

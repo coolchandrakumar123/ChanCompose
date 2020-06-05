@@ -2,6 +2,7 @@ package com.chan.compose.ui
 
 import android.graphics.Bitmap
 import android.util.Log
+import android.widget.TextView
 import androidx.compose.*
 import androidx.lifecycle.MutableLiveData
 import androidx.ui.core.*
@@ -14,16 +15,23 @@ import androidx.ui.foundation.shape.corner.RoundedCornerShape
 import androidx.ui.graphics.Color
 import androidx.ui.graphics.ImageAsset
 import androidx.ui.graphics.asImageAsset
+import androidx.ui.input.ImeAction
 import androidx.ui.layout.*
 import androidx.ui.layout.RowScope.gravity
 import androidx.ui.livedata.observeAsState
 import androidx.ui.material.Button
 import androidx.ui.material.MaterialTheme
+import androidx.ui.material.Surface
 import androidx.ui.res.vectorResource
+import androidx.ui.text.TextRange
 import androidx.ui.text.TextStyle
 import androidx.ui.unit.Dp
 import androidx.ui.unit.dp
+import androidx.ui.viewinterop.AndroidView
 import com.chan.compose.R
+import com.chan.compose.components.HintEditText
+import com.chan.compose.components.WebComponent
+import com.chan.compose.components.WebContext
 
 /**
  * Created by chandra-1765$ on 27/04/20$.
@@ -61,11 +69,48 @@ fun inflateTestCompose() {
 
     //adapterListImageTest()
     //inflateClickableList(TestItem("Title", 1))
-    val listData = ArrayList<TestItem>()
+
+    /*val listData = ArrayList<TestItem>()
     for(i in 1 until 3) {
         listData.add(TestItem("Item - $i", i))
     }
-    inflateClickableList(TestItemList(listData, 1))
+    inflateClickableList(TestItemList(listData, 1))*/
+
+    //inflateTextInputField()
+
+    inflateAndroidView()
+
+}
+
+@Composable
+fun inflateTextInputField() {
+    /*Surface(color = Color.LightGray, modifier = Modifier.padding(16.dp), shape = RoundedCornerShape(5.dp)) {
+        TextField(
+            value = TextFieldValue(),
+            modifier = Modifier.padding(16.dp) + Modifier.fillMaxWidth(),
+            imeAction = ImeAction.Search,
+            onValueChange = {
+
+            }
+        )
+    }*/
+    Column {
+        val state = state { TextFieldValue("search", TextRange(6,6)) }
+        Surface(color = Color.LightGray, modifier = Modifier.padding(16.dp), shape = RoundedCornerShape(5.dp)) {
+            TextField(
+                value = state.value,
+                modifier = Modifier.padding(16.dp) + Modifier.fillMaxWidth(),
+                imeAction = ImeAction.Search,
+                onValueChange = { state.value = it }
+            )
+        }
+        Text("The textfield has this text: "+state.value)
+
+        HintEditText(
+            hintText = "Search",
+            modifier = Modifier.padding(16.dp) + Modifier.fillMaxWidth()
+        )
+    }
 }
 
 @Composable
@@ -384,4 +429,29 @@ fun inflateClickableList(testItem: TestItem, click: () -> Unit) {
     }) {
         Text(text = "Item-${testItem.title} , count: ${testItem.count}")
     }
+}
+
+@Composable
+fun inflateAndroidView() {
+    Column(modifier = Modifier.fillMaxWidth().wrapContentSize(), horizontalGravity = Alignment.Start) {
+        Text(text = "AndroidView", modifier = Modifier.padding(all = 16.dp))
+
+        /*AndroidView(view = TextView(ContextAmbient.current).apply {
+            setText("InsideTextView")
+        })*/
+        AndroidView(resId = R.layout.textview_layout) {
+
+        }
+    }
+
+    /*Column(modifier = Modifier.padding(all = 16.dp)) {
+        textView("Web ViewTest")
+        Surface(Modifier.width(200.dp).height(200.dp)) {
+
+            WebComponent(
+                webContext = WebContext(),
+                url = "https://www.google.com/"
+            )
+        }
+    }*/
 }

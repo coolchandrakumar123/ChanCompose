@@ -31,6 +31,7 @@ import androidx.ui.foundation.gestures.draggable
 import androidx.ui.geometry.Rect
 import androidx.ui.graphics.Color
 import androidx.ui.graphics.Paint
+import androidx.ui.graphics.drawscope.DrawScope
 import androidx.ui.layout.*
 import androidx.ui.material.AlertDialog
 import androidx.ui.material.Button
@@ -177,7 +178,7 @@ private fun swipeRevealItem(modifier: Modifier, itemLeft: AnimatedFloat, itemWid
                 itemWidth.value = coordinates.size.width.value.toFloat()
             }
     ) {
-        drawRect(
+        /*drawRect(
             rect = Rect(
                 itemLeft.value,
                 0f,
@@ -185,7 +186,7 @@ private fun swipeRevealItem(modifier: Modifier, itemLeft: AnimatedFloat, itemWid
                 120f
             ),
             paint = paint
-        )
+        )*/
     }
 }
 
@@ -354,7 +355,7 @@ private fun DrawScope.drawLeftItems(
 ) {
     paint.color = colors[index % colors.size]
     paint.alpha = 1f
-    val centerX = size.width.value / 2
+    /*val centerX = size.width.value / 2
     val itemRect =
         Rect(
             centerX - width * 1.5f + horizontalOffset + padding,
@@ -368,7 +369,7 @@ private fun DrawScope.drawLeftItems(
         // draw another item
         paint.color = colors[(index - 1 + colors.size) % colors.size]
         drawRect(itemRect.translate(-width, 0f), paint)
-    }
+    }*/
 }
 
 private fun DrawScope.drawDismissingItem(
@@ -381,7 +382,7 @@ private fun DrawScope.drawDismissingItem(
 ) {
     paint.color = colors[index % colors.size]
     paint.alpha = alpha
-    val centerX = size.width.value / 2
+    /*val centerX = size.width.value / 2
     drawRect(
         Rect(
             centerX - width / 2 + padding,
@@ -390,7 +391,7 @@ private fun DrawScope.drawDismissingItem(
             bottom
         ),
         paint
-    )
+    )*/
 }
 
 private val colors = listOf(
