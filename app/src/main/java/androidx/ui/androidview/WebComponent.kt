@@ -1,18 +1,32 @@
-package com.chan.compose.components
+/*
+ * Copyright 2019 The Android Open Source Project
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
+package androidx.ui.androidview
+
+import android.content.Context
 import android.print.PrintDocumentAdapter
 import android.util.Log
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.compose.Composable
-import androidx.compose.Model
-import androidx.compose.state
 import androidx.ui.core.ContextAmbient
 import androidx.ui.foundation.Text
-import androidx.ui.material.Button
-import androidx.ui.viewinterop.AndroidView
 
 class WebContext {
+
     companion object {
         val debug = true
     }
@@ -59,46 +73,28 @@ private fun WebView.setUrl(url: String) {
     }
 }
 
-@Model
-class ClickItem(
-    var isClicked: Boolean = false
-)
-
+/*
 @Composable
 fun WebComponent(
     url: String,
     webViewClient: WebViewClient = WebViewClient(),
-    webContext: WebContext,
-    clickItem: ClickItem = ClickItem()
+    webContext: WebContext
 ) {
     if (WebContext.debug) {
         Log.d("WebComponent", "WebComponent compose " + url)
     }
-    //Text(text = url)
-    /*WebView(
+
+    */
+/*WebView(ContextAmbient.current).setRef {
+        webContext.webView = it
+    }
+*//*
+
+    WebView(
         ref = { webContext.webView = it },
         url = url,
         webViewClient = webViewClient
-    )*/
-    /*AndroidView(view = WebView(ContextAmbient.current).apply {
-        setUrl("chandran-webview")
-    })*/
+    )
 
-    val isClicked = state{clickItem.isClicked}
-    Log.d("ChanLog", "clicked: ${clickItem.isClicked}")
-
-    if (clickItem.isClicked) {
-        Log.d("ChanLog", "webview: ")
-        /*AndroidView(resId = R.layout.webview_layout) {
-            //it.findViewById<WebView>(R.id.webView)?.loadUrl("chandran-test")
-        }*/
-    } else {
-        Log.d("ChanLog", "Button: ")
-        Button(onClick = {
-            clickItem.isClicked = true
-        }) {
-            Text(text = "Click for WebView")
-        }
-    }
-
-}
+    //Text(text = url)
+}*/

@@ -3,7 +3,7 @@ package com.chan.compose.components
 import androidx.compose.Composable
 import androidx.compose.state
 import androidx.ui.core.*
-import androidx.ui.core.focus.FocusModifier
+import androidx.ui.focus.FocusModifier
 import androidx.ui.foundation.Text
 import androidx.ui.foundation.TextField
 import androidx.ui.foundation.TextFieldValue

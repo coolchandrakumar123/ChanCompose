@@ -2,6 +2,7 @@ package com.chan.compose.ui
 
 import android.graphics.Bitmap
 import android.util.Log
+import android.webkit.WebView
 import android.widget.TextView
 import androidx.compose.*
 import androidx.lifecycle.MutableLiveData
@@ -30,8 +31,6 @@ import androidx.ui.unit.dp
 import androidx.ui.viewinterop.AndroidView
 import com.chan.compose.R
 import com.chan.compose.components.HintEditText
-import com.chan.compose.components.WebComponent
-import com.chan.compose.components.WebContext
 
 /**
  * Created by chandra-1765$ on 27/04/20$.
@@ -77,8 +76,6 @@ fun inflateTestCompose() {
     inflateClickableList(TestItemList(listData, 1))*/
 
     //inflateTextInputField()
-
-    inflateAndroidView()
 
 }
 
@@ -429,29 +426,4 @@ fun inflateClickableList(testItem: TestItem, click: () -> Unit) {
     }) {
         Text(text = "Item-${testItem.title} , count: ${testItem.count}")
     }
-}
-
-@Composable
-fun inflateAndroidView() {
-    Column(modifier = Modifier.fillMaxWidth().wrapContentSize(), horizontalGravity = Alignment.Start) {
-        Text(text = "AndroidView", modifier = Modifier.padding(all = 16.dp))
-
-        /*AndroidView(view = TextView(ContextAmbient.current).apply {
-            setText("InsideTextView")
-        })*/
-        AndroidView(resId = R.layout.textview_layout) {
-
-        }
-    }
-
-    /*Column(modifier = Modifier.padding(all = 16.dp)) {
-        textView("Web ViewTest")
-        Surface(Modifier.width(200.dp).height(200.dp)) {
-
-            WebComponent(
-                webContext = WebContext(),
-                url = "https://www.google.com/"
-            )
-        }
-    }*/
 }

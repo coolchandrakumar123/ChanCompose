@@ -31,7 +31,6 @@ import androidx.ui.foundation.gestures.draggable
 import androidx.ui.geometry.Rect
 import androidx.ui.graphics.Color
 import androidx.ui.graphics.Paint
-import androidx.ui.graphics.drawscope.DrawScope
 import androidx.ui.layout.*
 import androidx.ui.material.AlertDialog
 import androidx.ui.material.Button

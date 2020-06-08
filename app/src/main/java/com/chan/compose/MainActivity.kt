@@ -12,6 +12,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.Composable
 import androidx.compose.Recomposer
 import androidx.compose.frames.modelListOf
+import androidx.ui.androidview.WebContext
 import androidx.ui.core.Alignment
 import androidx.ui.core.Modifier
 import androidx.ui.core.setContent
@@ -64,9 +65,13 @@ class MainActivity : AppCompatActivity() {
         }*/
     }
 
+    private val webContext = WebContext()
+
     private fun setCheckUI() {
         contentView.setContent(Recomposer.current()) {
-            inflateTestCompose()
+            //inflateTestCompose()
+            inflateAndroidView()
+            //renderViews(webContext = webContext)
             //composeAdapter()
             //verticalScroller()
             //swipeToDismissDemo()
